@@ -1,4 +1,4 @@
-import React from 'react';
+
 import GreetingSection from './Greetingsection';
 
 const HomePage = () => {

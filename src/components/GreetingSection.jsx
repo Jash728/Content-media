@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 const GreetingSection = () => {
   const today = new Date().toLocaleDateString('en-US', {
