@@ -2,20 +2,20 @@ import { useState } from "react";
 
 
 const Sidebar = () => {
-  // State to track the active link
+  
   const [active, setActive] = useState("Home");
 
-  // Function to handle active state change
+  
   const handleActive = (item) => {
     setActive(item);
   };
 
   return (
     <div className="w-64 h-screen bg-gray-50 flex flex-col justify-between p-4 shadow-lg">
-      {/* User Profile */}
+      
       <div className="flex flex-col items-center mb-8">
         <img
-          src="https://via.placeholder.com/100" // Replace with actual profile image
+          src="https://via.placeholder.com/100" 
           alt="Profile"
           className="w-16 h-16 rounded-full"
         />
@@ -23,7 +23,6 @@ const Sidebar = () => {
         <span className="text-green-500 text-sm">Online</span>
       </div>
 
-      {/* Navigation Links */}
       <nav className="flex flex-col space-y-4">
         <button
           onClick={() => handleActive("Ideate")}
@@ -59,7 +58,7 @@ const Sidebar = () => {
         </button>
       </nav>
 
-      {/* Settings and Logout */}
+      
       <div className="mt-auto">
         <button
           onClick={() => handleActive("Settings")}
@@ -78,7 +77,7 @@ const Sidebar = () => {
           Logout
         </button>
 
-        {/* Invite People Card */}
+        
         <div className="bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg p-4 flex flex-col items-center">
           <p className="text-sm">Refer and get early access to new updates and features.</p>
           <button className="mt-2 bg-white text-purple-600 rounded-full px-4 py-1 text-sm font-semibold">
