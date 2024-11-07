@@ -1,5 +1,5 @@
 
-import GreetingSection from './Greetingsection';
+import GreetingSection from './GreetingSection.jsx';
 
 const HomePage = () => {
   return (
