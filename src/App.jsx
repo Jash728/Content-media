@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Sidebar from './components/Sidebar';
 import HomePage from './components/HomePage';
+import { Route, Routes } from "react-router-dom";
+import AiPage from "./components/AiPage";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -10,10 +12,10 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="flex h-screen bg-gray-100">
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
-      <div className="flex flex-col flex-grow">
+      <div className="flex flex-col flex-grow overflow-y-auto">  
         <header className="p-4 bg-white shadow-md md:hidden flex justify-between items-center">
           <button
             onClick={toggleSidebar}
@@ -33,6 +35,11 @@ function App() {
 
         <main className="flex-grow p-6">
           <HomePage />
+          <Routes>
+              {/* <Route path="/" element={<GreetingSection />} /> */}
+              {/* <Route path="/ai" element={<AiPage />} /> */}
+            </Routes>
+
         </main>
       </div>
     </div>

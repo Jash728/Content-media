@@ -21,7 +21,7 @@ const MyTasksPanel = () => {
     <div className="p-4 md:p-6 bg-white rounded-lg shadow-md w-full max-w-md mx-auto md:mx-0 md:max-w-none">
       <h2 className="text-lg font-semibold mb-4">My Tasks</h2>
 
-      {/* Task Category: In Progress */}
+     
       <div className="mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -46,7 +46,7 @@ const MyTasksPanel = () => {
         )}
       </div>
 
-      {/* Task Category: To Do */}
+      
       <div className="mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -71,7 +71,7 @@ const MyTasksPanel = () => {
         )}
       </div>
 
-      {/* Task Category: Upcoming */}
+      
       <div>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">

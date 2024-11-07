@@ -5,7 +5,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   const handleActive = (item) => {
     setActive(item);
-    if (isOpen) toggleSidebar(); // Close sidebar on mobile when clicking an item
+    if (isOpen) toggleSidebar(); 
   };
 
   return (
