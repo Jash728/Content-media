@@ -1,21 +1,22 @@
 import { useState } from "react";
 
-
-const Sidebar = () => {
-  
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   const [active, setActive] = useState("Home");
 
-  
   const handleActive = (item) => {
     setActive(item);
+    if (isOpen) toggleSidebar(); // Close sidebar on mobile when clicking an item
   };
 
   return (
-    <div className="w-64 h-screen bg-gray-50 flex flex-col justify-between p-4 shadow-lg">
-      
+    <div
+      className={`fixed md:static inset-y-0 left-0 transform ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      } md:translate-x-0 transition-transform duration-300 ease-in-out w-64 bg-gray-50 h-full shadow-lg p-4 flex flex-col justify-between z-50`}
+    >
       <div className="flex flex-col items-center mb-8">
         <img
-          src="https://via.placeholder.com/100" 
+          src="https://via.placeholder.com/100"
           alt="Profile"
           className="w-16 h-16 rounded-full"
         />
@@ -24,45 +25,24 @@ const Sidebar = () => {
       </div>
 
       <nav className="flex flex-col space-y-4">
-        <button
-          onClick={() => handleActive("Ideate")}
-          className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${
-            active === "Ideate" ? "bg-orange-200 text-orange-700" : "text-gray-700"
-          } hover:text-purple-600`}
-        >
-          <span>⚡</span> <span>Ideate</span>
-        </button>
-        <button
-          onClick={() => handleActive("Home")}
-          className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${
-            active === "Home" ? "bg-orange-200 text-orange-700" : "text-gray-700"
-          } hover:text-purple-600`}
-        >
-          <span>🏠</span> <span>Home</span>
-        </button>
-        <button
-          onClick={() => handleActive("Plan")}
-          className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${
-            active === "Plan" ? "bg-orange-200 text-orange-700" : "text-gray-700"
-          } hover:text-purple-600`}
-        >
-          <span>📅</span> <span>Plan</span>
-        </button>
-        <button
-          onClick={() => handleActive("Calendar")}
-          className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${
-            active === "Calendar" ? "bg-orange-200 text-orange-700" : "text-gray-700"
-          } hover:text-purple-600`}
-        >
-          <span>📅</span> <span>Calendar</span>
-        </button>
+        {["Ideate", "Home", "Plan", "Calendar"].map((item) => (
+          <button
+            key={item}
+            onClick={() => handleActive(item)}
+            className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${
+              active === item ? "bg-orange-200 text-orange-700" : "text-gray-700"
+            } hover:text-purple-600`}
+          >
+            <span>{item === "Ideate" ? "⚡" : "📅"}</span>
+            <span>{item}</span>
+          </button>
+        ))}
       </nav>
 
-      
       <div className="mt-auto">
         <button
           onClick={() => handleActive("Settings")}
-          className={`block text-left w-full px-3 py-2 rounded-lg ${
+          className={`block w-full text-left px-3 py-2 rounded-lg ${
             active === "Settings" ? "bg-orange-200 text-orange-700" : "text-gray-700"
           } hover:text-purple-600 mb-4`}
         >
@@ -70,14 +50,13 @@ const Sidebar = () => {
         </button>
         <button
           onClick={() => handleActive("Logout")}
-          className={`block text-left w-full px-3 py-2 rounded-lg ${
+          className={`block w-full text-left px-3 py-2 rounded-lg ${
             active === "Logout" ? "bg-orange-200 text-orange-700" : "text-gray-700"
           } hover:text-purple-600 mb-8`}
         >
           Logout
         </button>
 
-        
         <div className="bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg p-4 flex flex-col items-center">
           <p className="text-sm">Refer and get early access to new updates and features.</p>
           <button className="mt-2 bg-white text-purple-600 rounded-full px-4 py-1 text-sm font-semibold">
