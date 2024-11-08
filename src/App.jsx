@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from './components/Sidebar';
 import HomePage from './components/HomePage';
+import Plans from './components/Plans'; 
 import { Route, Routes } from "react-router-dom";
 import AiPage from "./components/AiPage";
 
@@ -34,12 +35,11 @@ function App() {
         </header>
 
         <main className="flex-grow p-6">
-          <HomePage />
           <Routes>
-              {/* <Route path="/" element={<GreetingSection />} /> */}
-              {/* <Route path="/ai" element={<AiPage />} /> */}
-            </Routes>
-
+            <Route path="/" element={<HomePage />} /> 
+            <Route path="/ai" element={<AiPage />} /> 
+            <Route path="/plans" element={<Plans />} /> 
+          </Routes>
         </main>
       </div>
     </div>

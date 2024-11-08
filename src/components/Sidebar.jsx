@@ -1,11 +1,22 @@
 import { useState } from "react";
+import { FaHome, FaRegCalendarAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const [active, setActive] = useState("Home");
+  const navigate = useNavigate();  
 
   const handleActive = (item) => {
     setActive(item);
     if (isOpen) toggleSidebar(); 
+
+    
+    if (item === "Plan") {
+      navigate("/plans");  
+    }
+    if (item === "Home") {
+      navigate("/");  
+    }
   };
 
   return (
@@ -33,7 +44,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               active === item ? "bg-orange-200 text-orange-700" : "text-gray-700"
             } hover:text-purple-600`}
           >
-            <span>{item === "Ideate" ? "⚡" : "📅"}</span>
+            <span>
+              {item === "Home" ? <FaHome className="text-orange-500" /> : 
+               item === "Plan" ? <FaRegCalendarAlt className="text-orange-500" /> : 
+               item === "Ideate" ? "⚡" : "📅"}
+            </span>
             <span>{item}</span>
           </button>
         ))}

@@ -10,7 +10,7 @@ const GreetingSection = () => {
       <div>
         <p className="text-gray-500">{today}</p>
         <h1 className="text-2xl md:text-3xl font-bold">Hi, Akshita</h1>
-        <p className="text-lg text-purple-500">What are we creating today?</p>
+        <p className="text-lg text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500">What are we creating today?</p>
       </div>
 
       <div className="flex space-x-4">
