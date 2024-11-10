@@ -17,6 +17,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     if (item === "Home") {
       navigate("/");  
     }
+    if(item=="Ideate"){
+      navigate("/ai")
+    }
   };
 
   return (

@@ -4,6 +4,7 @@ import HomePage from './components/HomePage';
 import Plans from './components/Plans'; 
 import { Route, Routes } from "react-router-dom";
 import AiPage from "./components/AiPage";
+import Chat from "./components/Chat";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -40,6 +41,7 @@ function App() {
             <Route path="/ai" element={<AiPage />} /> 
             <Route path="/plans" element={<Plans />} /> 
           </Routes>
+          {/* <Chat/> */}
         </main>
       </div>
     </div>
