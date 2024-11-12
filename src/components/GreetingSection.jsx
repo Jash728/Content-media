@@ -6,7 +6,7 @@ const GreetingSection = () => {
   });
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+    <div className="p-6 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
       <div>
         <p className="text-gray-500">{today}</p>
         <h1 className="text-2xl md:text-3xl font-bold">Hi, Akshita</h1>

@@ -28,15 +28,18 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         isOpen ? "translate-x-0" : "-translate-x-full"
       } md:translate-x-0 transition-transform duration-300 ease-in-out w-64 bg-gray-50 h-full shadow-lg p-4 flex flex-col justify-between z-50`}
     >
-      <div className="flex flex-col items-center mb-8">
-        <img
-          src="https://via.placeholder.com/100"
-          alt="Profile"
-          className="w-16 h-16 rounded-full"
-        />
-        <h2 className="mt-4 text-lg font-semibold">Akshita Gupta</h2>
-        <span className="text-green-500 text-sm">Online</span>
-      </div>
+      <div className="flex items-center mb-8">
+  <img
+    src="https://via.placeholder.com/100"
+    alt="Profile"
+    className="w-16 h-16 rounded-full"
+  />
+  <div className="ml-4"> {/* Adding margin-left for spacing */}
+    <h2 className="text-lg font-semibold">Akshita Gupta</h2>
+    <span className="text-green-500 text-sm">Online</span>
+  </div>
+</div>
+
 
       <nav className="flex flex-col space-y-4">
         {["Ideate", "Home", "Plan", "Calendar"].map((item) => (
