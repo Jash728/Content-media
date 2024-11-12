@@ -126,17 +126,17 @@ const MyTasksPanel = ({ tasks = { inProgress: [], toDo: [], upcoming: [] }, onAd
             </div>
           </div>
 
-          {/* Conditionally render task columns and tasks based on expanded state */}
+          
           {expandedSections[section] && (
             <>
-              {/* Task table header */}
+            
               <div className="grid grid-cols-3 gap-2 mt-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-2">
                 <span className="text-left">Task Name</span>
                 <span className="text-center">Urgency</span>
                 <span className="text-right">Due Date</span>
               </div>
 
-              {/* Task items */}
+              
               {tasks[section]?.map((task, index) => (
                 <div key={index} className="grid grid-cols-3 gap-2 bg-gray-50 p-2 mt-1 rounded-lg items-center shadow-sm">
                   <p className="text-sm font-medium text-left">{task.name}</p>
@@ -155,7 +155,7 @@ const MyTasksPanel = ({ tasks = { inProgress: [], toDo: [], upcoming: [] }, onAd
                 </div>
               ))}
 
-              {/* Add task button below each list */}
+              
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="text-purple-500 hover:text-purple-700 mt-3 flex items-center space-x-2 justify-center bg-purple-100 py-1 px-3 rounded-md"

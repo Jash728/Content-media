@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaPen, FaTrash, FaExpandAlt, FaCog } from 'react-icons/fa';
-import AddExperienceModal from './AddExperienceModal'; // Ensure this is imported
+import AddExperienceModal from './AddExperienceModal';
 
 const ExperienceCard = () => {
     const [experiences, setExperiences] = useState([
@@ -16,8 +16,8 @@ const ExperienceCard = () => {
                 ...experiences,
                 { id: Date.now(), text: newExperience.trim() },
             ]);
-            setNewExperience(""); // Reset the input field
-            setIsModalOpen(false); // Close the modal after adding
+            setNewExperience(""); 
+            setIsModalOpen(false); 
         }
     };
 
@@ -37,12 +37,12 @@ const ExperienceCard = () => {
             )
         );
         setIsEditing(null);
-        setNewExperience(""); // Clear input
+        setNewExperience("");
     };
 
     return (
         <div className="p-4 md:p-6 bg-white rounded-lg shadow-lg w-full max-w-md mx-auto md:mx-0 md:max-w-none">
-            {/* Header */}
+        
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-semibold text-gray-800 flex items-center space-x-2">
                     <FaPen className="text-orange-500" />
@@ -54,7 +54,7 @@ const ExperienceCard = () => {
                 </div> */}
             </div>
 
-            {/* List of Experiences */}
+            
             {experiences.map((experience) => (
                 <div
                     className="flex items-center justify-between mb-4 p-4 bg-gray-50 rounded-lg shadow-sm"
@@ -94,7 +94,7 @@ const ExperienceCard = () => {
                 </div>
             ))}
 
-            {/* Add Button to Open Modal */}
+           
             <button
                 onClick={() => setIsModalOpen(true)}
                 className="mt-4 px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600"
@@ -102,7 +102,7 @@ const ExperienceCard = () => {
                 Add New Experience
             </button>
 
-            {/* Modal Component */}
+           
             <AddExperienceModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

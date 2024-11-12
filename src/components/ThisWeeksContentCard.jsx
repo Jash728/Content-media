@@ -45,7 +45,7 @@ const ThisWeeksContentCard = ({ tasks = {} }) => {
     setSelectedTasks(getTasksForDate(date));
   };
 
-  // Function to check if a task is due tomorrow
+  
   const isDueTomorrow = (taskDate) => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -109,8 +109,8 @@ const ThisWeeksContentCard = ({ tasks = {} }) => {
                   key={index}
                   className={`flex justify-between items-center p-2 rounded-lg shadow-sm ${
                     isDueTomorrow(taskDueDate)
-                      ? 'border-2 border-red-500 bg-red-100' // Red border and light red background
-                      : 'border-2 border-gray-300 bg-gray-100' // Gray border and background for other tasks
+                      ? 'border-2 border-red-500 bg-red-100' 
+                      : 'border-2 border-gray-300 bg-gray-100' 
                   }`}
                 >
                   <span className="text-sm font-semibold text-gray-800">{task.name}</span>
