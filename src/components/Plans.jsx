@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { FaInstagram } from 'react-icons/fa';
 
 function Plans() {
   const [activeTab, setActiveTab] = useState("Content");
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  
+  
+  const cardRefs = useRef([]);
 
   const plansData = [
     {
@@ -27,9 +31,31 @@ function Plans() {
     },
   ];
 
+ 
+  const handleCardClick = (plan, index) => {
+    setSelectedPlan(plan);
+
+   
+    cardRefs.current.forEach((card, i) => {
+      if (i === index) {
+        card.style.backgroundColor = 'rgb(255, 219, 187)'; 
+      } else {
+        card.style.backgroundColor = '';
+      }
+    });
+  };
+
+ 
+  const closeModal = () => {
+    setSelectedPlan(null); 
+    cardRefs.current.forEach((card) => {
+      card.style.backgroundColor = ''; 
+    });
+  };
+
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
-      
+    <div className="p-8 bg-gray-100 min-h-screen relative" onClick={closeModal}>
+     
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-semibold text-gray-800">
           Let's{" "}
@@ -65,18 +91,21 @@ function Plans() {
         {plansData.map((plan, index) => (
           <div
             key={index}
-            className="relative p-6 bg-white rounded-lg shadow-md"
-            style={{ width: "90%", height: "90%" }} 
+            ref={(el) => (cardRefs.current[index] = el)}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleCardClick(plan, index);
+            }}
+            className={`relative p-6 bg-white rounded-lg shadow-md cursor-pointer transition-colors duration-300 hover:bg-gray-50`}
+            style={{ width: "90%", height: "90%" }}
           >
            
-            <div className="absolute -left-12 top-1/9 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full border border-gray-300"></div>
-            
+            <div className="absolute -left-12 top-1/4 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full border border-gray-300"></div>
+
             
             <div>
               <h3 className="text-xl font-bold text-gray-800 mb-2">{plan.title}</h3>
               <p className="text-gray-500 mb-4">{plan.description}</p>
-              
-              
               <div className="flex items-center text-gray-500">
                 <FaInstagram className="mr-2 text-pink-500" />
                 <span>{plan.platform}</span>
@@ -85,6 +114,33 @@ function Plans() {
           </div>
         ))}
       </div>
+
+     
+      {selectedPlan && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+          onClick={closeModal}
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-lg relative"
+            style={{ width: "90%", maxWidth: "500px" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-2 right-2 text-gray-500"
+              onClick={closeModal}
+            >
+              &times;
+            </button>
+            <h2 className="text-2xl font-bold mb-4">{selectedPlan.title}</h2>
+            <p className="text-gray-600">{selectedPlan.description}</p>
+            <div className="flex items-center mt-4 text-gray-500">
+              <FaInstagram className="mr-2 text-pink-500" />
+              <span>{selectedPlan.platform}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
