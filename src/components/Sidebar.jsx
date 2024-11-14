@@ -12,7 +12,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
     
     if (item === "Plan") {
-      navigate("/plans");  
+      navigate("/contentPage");  
     }
     if (item === "Home") {
       navigate("/");  
@@ -34,7 +34,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     alt="Profile"
     className="w-16 h-16 rounded-full"
   />
-  <div className="ml-4"> {/* Adding margin-left for spacing */}
+  <div className="ml-4"> 
     <h2 className="text-lg font-semibold">Akshita Gupta</h2>
     <span className="text-green-500 text-sm">Online</span>
   </div>

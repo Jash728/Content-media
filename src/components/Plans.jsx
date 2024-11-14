@@ -1,61 +1,60 @@
-import React, { useState, useRef } from 'react';
-import { FaInstagram } from 'react-icons/fa';
+import React, { useState, useRef } from "react";
+import { FaInstagram } from "react-icons/fa";
+import NewContentModal from "./NewContentModal"; 
 
 function Plans() {
   const [activeTab, setActiveTab] = useState("Content");
   const [selectedPlan, setSelectedPlan] = useState(null);
-  
-  
-  const cardRefs = useRef([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
+  const cardRefs = useRef([]);
+  
   const plansData = [
     {
       title: "Never do this if you want to grow your hair!",
-      description: "3 home remedies to stop excessive hair fall for stressed working woman",
+      description:
+        "3 home remedies to stop excessive hair fall for stressed working women",
       platform: "Instagram",
+      hook: "Never do this if you want to grow your hair!",
+      script:
+        "3 home remedies to stop excessive hair fall for stressed working women",
+      cta: "3 home remedies to stop excessive hair fall for stressed working women",
+      targetAudience: "Working young girls",
+      focus: "Community building",
+      posting: "November 15, 2024",
+      tasks: [
+        {
+          description: "Record video tomorrow",
+          priority: "High",
+          dueDate: "Tomorrow",
+        },
+      ],
     },
-    {
-      title: "These are blah blah",
-      description: "Lorem Ipsum",
-      platform: "Instagram",
-    },
-    {
-      title: "5 ways to X",
-      description: "Loren Ipsum",
-      platform: "Instagram",
-    },
-    {
-      title: "What if you did X",
-      description: "Loren Ipsum",
-      platform: "Instagram",
-    },
+    
   ];
 
- 
   const handleCardClick = (plan, index) => {
     setSelectedPlan(plan);
-
-   
     cardRefs.current.forEach((card, i) => {
-      if (i === index) {
-        card.style.backgroundColor = 'rgb(255, 219, 187)'; 
-      } else {
-        card.style.backgroundColor = '';
-      }
+      card.style.backgroundColor = i === index ? "rgb(255, 219, 187)" : "";
     });
   };
 
- 
   const closeModal = () => {
-    setSelectedPlan(null); 
-    cardRefs.current.forEach((card) => {
-      card.style.backgroundColor = ''; 
-    });
+    setSelectedPlan(null);
+    cardRefs.current.forEach((card) => (card.style.backgroundColor = ""));
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen relative" onClick={closeModal}>
-     
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-semibold text-gray-800">
           Let's{" "}
@@ -64,12 +63,15 @@ function Plans() {
           </span>{" "}
           together!
         </h1>
-        <button className="px-4 py-2 bg-white border-2 border-transparent font-semibold rounded-full shadow-md hover:bg-gray-100 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-500 hover:from-blue-500 hover:to-pink-600">
+        <button
+          onClick={handleOpenModal} 
+          className="px-4 py-2 bg-white border-2 border-transparent font-semibold rounded-full shadow-md hover:bg-gray-100 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-500 hover:from-blue-500 hover:to-pink-600"
+        >
           Start new content
         </button>
       </div>
 
-      
+     
       <div className="flex mb-6 space-x-4">
         {["Content", "Platform", "Tasks", "Completed"].map((tab) => (
           <button
@@ -86,7 +88,6 @@ function Plans() {
         ))}
       </div>
 
-     
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 pl-12">
         {plansData.map((plan, index) => (
           <div
@@ -96,15 +97,14 @@ function Plans() {
               event.stopPropagation();
               handleCardClick(plan, index);
             }}
-            className={`relative p-6 bg-white rounded-lg shadow-md cursor-pointer transition-colors duration-300 hover:bg-gray-50`}
+            className="relative p-6 bg-white rounded-lg shadow-md cursor-pointer transition-colors duration-300 hover:bg-gray-50"
             style={{ width: "90%", height: "90%" }}
           >
-           
             <div className="absolute -left-12 top-1/4 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full border border-gray-300"></div>
-
-            
             <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{plan.title}</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">
+                {plan.title}
+              </h3>
               <p className="text-gray-500 mb-4">{plan.description}</p>
               <div className="flex items-center text-gray-500">
                 <FaInstagram className="mr-2 text-pink-500" />
@@ -115,31 +115,33 @@ function Plans() {
         ))}
       </div>
 
-     
       {selectedPlan && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
           onClick={closeModal}
         >
+        
           <div
-            className="bg-white p-6 rounded-lg shadow-lg relative"
-            style={{ width: "90%", maxWidth: "500px" }}
+            className="bg-white p-6 rounded-lg shadow-lg relative max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
+          
             <button
               className="absolute top-2 right-2 text-gray-500"
               onClick={closeModal}
             >
               &times;
             </button>
-            <h2 className="text-2xl font-bold mb-4">{selectedPlan.title}</h2>
-            <p className="text-gray-600">{selectedPlan.description}</p>
-            <div className="flex items-center mt-4 text-gray-500">
-              <FaInstagram className="mr-2 text-pink-500" />
-              <span>{selectedPlan.platform}</span>
-            </div>
+            
           </div>
         </div>
+      )}
+
+      
+      {isModalOpen && (
+        <NewContentModal
+          closeModal={handleCloseModal} 
+        />
       )}
     </div>
   );
