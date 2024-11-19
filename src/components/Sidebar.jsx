@@ -14,6 +14,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     if (item === "Plan") {
       navigate("/contentPage");  
     }
+    if (item === "Calendar") {
+      navigate("/calendar");
+    }
+    
     if (item === "Home") {
       navigate("/");  
     }

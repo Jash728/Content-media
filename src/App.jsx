@@ -6,6 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import AiPage from "./components/AiPage";
 import Chat from "./components/Chat";
 import ContentPage from "./components/ContentPage";
+import CalendarPage from "./components/CalendarPage";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -42,8 +43,9 @@ function App() {
             <Route path="/ai" element={<AiPage />} /> 
             <Route path="/plans" element={<Plans />} /> 
             <Route path="/contentPage" element={<ContentPage />} />
-            <Route path="/chat" element={<Chat />} /> {/* Add Chat Route */}
-            <Route path="*" element={<div>404 - Not Found</div>} /> {/* Catch-All Route */}
+            <Route path="/chat" element={<Chat />} /> 
+            <Route path="*" element={<div>404 - Not Found</div>} /> 
+            <Route path="/calendar" element={<CalendarPage />} />
           </Routes>
         </main>
       </div>
