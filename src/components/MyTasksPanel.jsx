@@ -1,49 +1,77 @@
-import React, { useState } from 'react';
-import { FaPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import { FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
-const MyTasksPanel = ({ tasks = { inProgress: [], toDo: [], upcoming: [] }, onAddTask }) => {
+const MyTasksPanel = ({ onAddTask }) => {
+  const [tasks, setTasks] = useState({
+    inProgress: [],
+    toDo: [],
+    upcoming: [],
+  });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskName, setTaskName] = useState('');
-  const [taskDate, setTaskDate] = useState('');
+  const [taskName, setTaskName] = useState("");
+  const [taskDate, setTaskDate] = useState("");
   const [expandedSections, setExpandedSections] = useState({
     inProgress: false,
     toDo: false,
     upcoming: false,
   });
 
+  useEffect(() => {
+    
+    const storedTasks = JSON.parse(localStorage.getItem("tasks")) || {
+      inProgress: [],
+      toDo: [],
+      upcoming: [],
+    };
+    setTasks(storedTasks);
+  }, []);
+
+  const saveTasksToLocalStorage = (updatedTasks) => {
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+  };
+
   const handleAddTask = () => {
-    if (typeof onAddTask !== 'function') {
-      console.error('onAddTask is not a function');
-      return;
-    }
+    if (!taskName || !taskDate) return;
 
     const taskDueDate = new Date(taskDate);
     const today = new Date();
-    const differenceInDays = Math.ceil((taskDueDate - today) / (1000 * 60 * 60 * 24));
+    const differenceInDays = Math.ceil(
+      (taskDueDate - today) / (1000 * 60 * 60 * 24)
+    );
 
     const newTask = { name: taskName, dueDate: taskDate };
-    onAddTask(newTask, differenceInDays);
 
-    setTaskName('');
-    setTaskDate('');
+    let updatedTasks = { ...tasks };
+
+    if (differenceInDays <= 0) {
+      updatedTasks.inProgress.push(newTask);
+    } else if (differenceInDays === 1) {
+      updatedTasks.toDo.push(newTask);
+    } else {
+      updatedTasks.upcoming.push(newTask);
+    }
+
+    setTasks(updatedTasks);
+    saveTasksToLocalStorage(updatedTasks);
+
+    setTaskName("");
+    setTaskDate("");
     setIsModalOpen(false);
+
+    if (typeof onAddTask === "function") onAddTask(newTask);
   };
 
   const toggleSection = (section) => {
-    setExpandedSections((prevState) => ({
-      ...prevState,
-      [section]: !prevState[section],
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
     }));
   };
 
-  const formatDueDate = (date) => {
-    const taskDueDate = new Date(date);
-    const today = new Date();
-    const differenceInDays = Math.ceil((taskDueDate - today) / (1000 * 60 * 60 * 24));
-
-    if (differenceInDays === 0) return "Today";
-    if (differenceInDays === 1) return "Tomorrow";
-    return `${differenceInDays} days`;
+  const formatDueDate = (dateString) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   return (
@@ -64,7 +92,9 @@ const MyTasksPanel = ({ tasks = { inProgress: [], toDo: [], upcoming: [] }, onAd
           <div className="bg-white p-6 rounded-lg shadow-lg w-80">
             <h3 className="text-lg font-semibold mb-4">Add New Task</h3>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Task Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Task Name
+              </label>
               <input
                 type="text"
                 value={taskName}
@@ -74,7 +104,9 @@ const MyTasksPanel = ({ tasks = { inProgress: [], toDo: [], upcoming: [] }, onAd
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Due Date</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Due Date
+              </label>
               <input
                 type="date"
                 value={taskDate}
@@ -92,8 +124,8 @@ const MyTasksPanel = ({ tasks = { inProgress: [], toDo: [], upcoming: [] }, onAd
         </div>
       )}
 
-      {/* Task sections */}
-      {['inProgress', 'toDo', 'upcoming'].map((section) => (
+      
+      {["inProgress", "toDo", "upcoming"].map((section) => (
         <div key={section} className="mb-4">
           <div
             className="flex items-center justify-between cursor-pointer"
@@ -111,58 +143,62 @@ const MyTasksPanel = ({ tasks = { inProgress: [], toDo: [], upcoming: [] }, onAd
               )}
               <span
                 className={`text-sm md:text-base font-semibold px-3 py-1 rounded-full ${
-                  section === 'inProgress'
-                    ? 'bg-blue-100 text-blue-600'
-                    : section === 'toDo'
-                    ? 'bg-gray-100 text-gray-600'
-                    : 'bg-orange-100 text-orange-600'
+                  section === "inProgress"
+                    ? "bg-blue-100 text-blue-600"
+                    : section === "toDo"
+                    ? "bg-gray-100 text-gray-600"
+                    : "bg-orange-100 text-orange-600"
                 }`}
               >
-                {section === 'inProgress' ? 'In Progress' : section === 'toDo' ? 'To Do' : 'Upcoming'}
+                {section === "inProgress"
+                  ? "In Progress"
+                  : section === "toDo"
+                  ? "To Do"
+                  : "Upcoming"}
               </span>
               <span className="text-xs md:text-sm text-gray-500">
-                &nbsp;• {tasks[section]?.length} {tasks[section]?.length === 1 ? 'task' : 'tasks'}
+                &nbsp;• {tasks[section]?.length}{" "}
+                {tasks[section]?.length === 1 ? "task" : "tasks"}
               </span>
             </div>
           </div>
 
-          
           {expandedSections[section] && (
             <>
-            
               <div className="grid grid-cols-3 gap-2 mt-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-2">
                 <span className="text-left">Task Name</span>
                 <span className="text-center">Urgency</span>
                 <span className="text-right">Due Date</span>
               </div>
 
-              
               {tasks[section]?.map((task, index) => (
-                <div key={index} className="grid grid-cols-3 gap-2 bg-gray-50 p-2 mt-1 rounded-lg items-center shadow-sm">
+                <div
+                  key={index}
+                  className="grid grid-cols-3 gap-2 bg-gray-50 p-2 mt-1 rounded-lg items-center shadow-sm"
+                >
                   <p className="text-sm font-medium text-left">{task.name}</p>
                   <p className="text-sm font-semibold text-center">
                     <span
                       className={`px-2 py-1 rounded-full ${
-                        section === 'inProgress' ? 'bg-red-100 text-red-600 border border-red-600' :
-                        section === 'toDo' ? 'bg-yellow-100 text-yellow-600 border border-yellow-600' :
-                        'bg-green-100 text-green-600 border border-green-600'
+                        section === "inProgress"
+                          ? "bg-red-100 text-red-600 border border-red-600"
+                          : section === "toDo"
+                          ? "bg-yellow-100 text-yellow-600 border border-yellow-600"
+                          : "bg-green-100 text-green-600 border border-green-600"
                       }`}
                     >
-                      {section === 'inProgress' ? 'High' : section === 'toDo' ? 'Medium' : 'Low'}
+                      {section === "inProgress"
+                        ? "High"
+                        : section === "toDo"
+                        ? "Medium"
+                        : "Low"}
                     </span>
                   </p>
-                  <p className="text-sm text-gray-500 text-right">{formatDueDate(task.dueDate)}</p>
+                  <p className="text-sm text-gray-500 text-right">
+                    {formatDueDate(task.dueDate)}
+                  </p>
                 </div>
               ))}
-
-              
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="text-purple-500 hover:text-purple-700 mt-3 flex items-center space-x-2 justify-center bg-purple-100 py-1 px-3 rounded-md"
-              >
-                <FaPlus className="w-4 h-4" />
-                <span className="text-sm font-medium">Add Task</span>
-              </button>
             </>
           )}
         </div>
