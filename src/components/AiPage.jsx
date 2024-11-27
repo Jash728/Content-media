@@ -1,68 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const AiPage = () => {
-  const [userPrompts, setUserPrompts] = useState([]);
-
-  const handleButtonClick = (prompt) => {
-    
-    setUserPrompts((prevPrompts) => [...prevPrompts, prompt]);
+    const [prompt, setPrompt] = useState(""); 
+    const [response, setResponse] = useState(""); 
+    const [isLoading, setIsLoading] = useState(false); 
 
     
-    const iframe = document.querySelector("iframe");
-    if (iframe && iframe.contentWindow) {
-      
-      iframe.contentWindow.postMessage(prompt, "https://www.chatbase.co");
-    }
-  };
+    const generateText = async () => {
+        if (!prompt.trim()) {
+            alert("Please enter a prompt.");
+            return;
+        }
 
-  return (
-    <div className="h-screen flex">
-      <div className="flex-1 p-8">
-        <h1 className="text-4xl font-semibold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500">
-          How can I help you today?
-        </h1>
+        setResponse(""); 
+        setIsLoading(true);
 
-        <div className="flex justify-center items-center h-[60vh] mb-8">
-          <iframe
-            src="https://www.chatbase.co/chatbot-iframe/GVYH1vSnhZh_VuQ1wOIKK"
-            title="AI Content"
-            className="w-full h-full"
-            style={{ border: "none" }}
-          ></iframe>
+        try {
+            const response = await fetch("http://localhost:11434/api/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    model: "llama3.2", 
+                    prompt: prompt, 
+                }),
+            });
+
+            if (!response.body) throw new Error("No response body from server");
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            let done = false;
+            let accumulatedResponse = ""; 
+
+            while (!done) {
+                const { value, done: streamDone } = await reader.read();
+                done = streamDone;
+
+                if (value) {
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk
+                        .split("\n")
+                        .filter(Boolean) 
+                        .map((line) => JSON.parse(line)); 
+
+                   
+                    lines.forEach((line) => {
+                        accumulatedResponse += line.response;
+                    });
+
+                    
+                    setResponse(accumulatedResponse);
+                }
+            }
+        } catch (error) {
+            console.error("Error calling Ollama API:", error);
+            alert("Failed to get a response from the AI server.");
+        } finally {
+            setIsLoading(false); 
+        }
+    };
+
+    return (
+        <div className="p-4 max-w-xl mx-auto">
+            <h1 className="text-2xl font-bold mb-4">AI Chatbot</h1>
+
+            
+            <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Enter your prompt here..."
+                className="w-full p-2 border rounded mb-4"
+                rows="4"
+            ></textarea>
+
+           
+            <button
+                onClick={generateText}
+                disabled={isLoading}
+                className={`px-4 py-2 rounded ${
+                    isLoading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-600 text-white"
+                }`}
+            >
+                {isLoading ? "Generating..." : "Generate Text"}
+            </button>
+
+            
+            <div className="mt-4 p-4 bg-gray-100 rounded shadow">
+                <strong>AI Response:</strong>
+                <p className="mt-2 whitespace-pre-wrap">{response || "No response yet."}</p>
+            </div>
         </div>
-
-        <div className="flex flex-wrap justify-center gap-4">
-          <button onClick={() => handleButtonClick('Give me ideas in my niche')} className="px-6 py-3 rounded-lg bg-orange-200 text-gray-800 font-semibold hover:bg-orange-300">
-            Give me ideas in my niche
-          </button>
-          <button onClick={() => handleButtonClick('Give me script for -')} className="px-6 py-3 rounded-lg bg-orange-200 text-gray-800 font-semibold hover:bg-orange-300">
-            Give me script for -
-          </button>
-          <button onClick={() => handleButtonClick('Hook ideas for -')} className="px-6 py-3 rounded-lg bg-orange-200 text-gray-800 font-semibold hover:bg-orange-300">
-            Hook ideas for -
-          </button>
-          <button onClick={() => handleButtonClick('Editing tips for reels')} className="px-6 py-3 rounded-lg bg-orange-200 text-gray-800 font-semibold hover:bg-orange-300">
-            Editing tips for reels
-          </button>
-          <button onClick={() => handleButtonClick('Trend')} className="px-6 py-3 rounded-lg bg-orange-200 text-gray-800 font-semibold hover:bg-orange-300">
-            Trend
-          </button>
-        </div>
-
-       
-        <div className="mt-8">
-          <h2 className="text-2xl font-semibold">User Prompts:</h2>
-          <ul>
-            {userPrompts.map((prompt, index) => (
-              <li key={index} className="mt-2 p-4 bg-gray-100 rounded">
-                {prompt}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default AiPage;
