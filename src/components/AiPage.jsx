@@ -31,7 +31,7 @@ const AiPage = () => {
         setIsLoading(true);
 
         try {
-            const aiResponse = await fetch("http://localhost:11434/api/generate", {
+            const aiResponse = await fetch("https://content-media-backend.onrender.com/api/generate", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
