@@ -1,163 +1,158 @@
-import React, { useState } from "react";
-import PlatformSelection from "./PlatformSelection";
-import PlatformContent from "./PlatformContent";
-import NewContentModal from "./NewContentModal";
-import ShowContentModal from "./ShowContentModal";
-import { FaInstagram, FaFacebook, FaLinkedin, FaTwitter, FaGlobe, FaPlus } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
 
-function ContentPage() {
-  const [contentData, setContentData] = useState([]);
-  const [isNewContentModalOpen, setIsNewContentModalOpen] = useState(false);
-  const [isShowContentModalOpen, setIsShowContentModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("Content");
-  const [selectedPlatform, setSelectedPlatform] = useState(null);
-  const [selectedContent, setSelectedContent] = useState(null);
-  const [selectedCardId, setSelectedCardId] = useState(null);
+const AiPage = () => {
+  const [prompt, setPrompt] = useState("");
+  const [response, setResponse] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]); // Store fetched chat history
 
-  const platformIcons = {
-    instagram: <FaInstagram className="text-pink-500 mr-1" />,
-    facebook: <FaFacebook className="text-blue-600 mr-1" />,
-    linkedin: <FaLinkedin className="text-blue-700 mr-1" />,
-    twitter: <FaTwitter className="text-blue-400 mr-1" />,
-    other: <FaGlobe className="text-gray-500 mr-1" />,
+  // Fetch chat history from the backend
+  const fetchChatHistory = async () => {
+    try {
+      const res = await fetch(
+        "https://content-media-backend.onrender.com/api/chats"
+      );
+      const data = await res.json();
+      setChatHistory(data);
+    } catch (error) {
+      console.error("Error fetching chat history:", error);
+    }
   };
 
-  const openNewContentModal = () => setIsNewContentModalOpen(true);
-  const closeNewContentModal = () => setIsNewContentModalOpen(false);
+  useEffect(() => {
+    fetchChatHistory(); // Fetch chat history on component mount
+  }, []);
 
-  const handleCardClick = (content) => {
-    setSelectedContent(content);
-    setSelectedCardId(content.id);
-    setIsShowContentModalOpen(true);
+  const generateText = async () => {
+    if (!prompt.trim()) {
+      alert("Please enter a prompt.");
+      return;
+    }
+
+    setResponse("");
+    setIsLoading(true);
+
+    try {
+       
+        
+      const apiUrl = `${process.env.REACT_APP_API_URL}/api/generate`; // Use the deployed URL
+
+      const aiResponse = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama3.2",
+          prompt: prompt,
+        }),
+      });
+
+      if (!aiResponse.body) throw new Error("No response body from AI server");
+
+      const reader = aiResponse.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let done = false;
+      let accumulatedResponse = "";
+
+      while (!done) {
+        const { value, done: streamDone } = await reader.read();
+        done = streamDone;
+
+        if (value) {
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk
+            .split("\n")
+            .filter(Boolean)
+            .map((line) => JSON.parse(line));
+
+          lines.forEach((line) => {
+            accumulatedResponse += line.response;
+          });
+
+          setResponse(accumulatedResponse);
+        }
+      }
+
+      // Save prompt and response to the backend
+      await fetch("https://content-media-backend.onrender.com/api/chats", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+          response: accumulatedResponse,
+        }),
+      });
+
+      fetchChatHistory(); // Refresh chat history
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred.");
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  const closeShowContentModal = () => {
-    setIsShowContentModalOpen(false);
-    setSelectedContent(null);
-    setSelectedCardId(null);
-  };
-
-  const handleNewContent = (newContent) => {
-    const newContentWithId = { ...newContent, id: new Date().getTime(), completed: false };
-    setContentData((prevData) => [...prevData, newContentWithId]);
-  };
-
-  const displayedContent =
-    activeTab === "Completed"
-      ? contentData.filter((content) => content.completed)
-      : contentData.filter((content) => !content.completed);
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-semibold text-gray-800">
-          Let's{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500">
-            plan your content
-          </span>{" "}
-          together!
-        </h1>
-        <button
-          onClick={openNewContentModal}
-          className="px-4 py-2 bg-white border-2 border-transparent font-semibold rounded-full shadow-md hover:bg-gray-100 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-500 hover:from-blue-500 hover:to-pink-600"
-        >
-          Start new content
-        </button>
+    <div className="p-4 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">AI Chatbot</h1>
+
+      <textarea
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Enter your prompt here..."
+        className="w-full p-2 border rounded mb-4"
+        rows="4"
+      ></textarea>
+
+      <button
+        onClick={generateText}
+        disabled={isLoading}
+        className={`px-4 py-2 rounded ${
+          isLoading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-600 text-white"
+        }`}
+      >
+        {isLoading ? "Generating..." : "Generate Text"}
+      </button>
+
+      <div className="mt-4 p-4 bg-gray-100 rounded shadow">
+        <strong>AI Response:</strong>
+        <p className="mt-2 whitespace-pre-wrap">
+          {response || "No response yet."}
+        </p>
       </div>
 
-      <div className="flex mb-6 space-x-4">
-        {["Content", "Platform", "Tasks", "Completed"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`text-lg font-semibold pb-2 ${
-              activeTab === tab
-                ? "text-orange-600 border-b-4 border-orange-500"
-                : "text-gray-600"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {activeTab === "Platform" ? (
-        <div>
-          <PlatformSelection onSelectPlatform={setSelectedPlatform} />
-          <PlatformContent
-            selectedPlatform={selectedPlatform}
-            contentData={displayedContent}
-          />
-        </div>
-      ) : (
-        <div className="content-cards grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 pl-8">
-          {displayedContent.length === 0 ? (
-            <div
-              className="flex flex-col items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer"
-              onClick={openNewContentModal}
-              style={{ height: "300px", border: "2px dashed #ddd" }}
-            >
-              <FaPlus className="text-6xl mb-2" />
-              <p className="text-lg font-semibold">Add new content</p>
-            </div>
-          ) : (
-            displayedContent.map((content) => (
-              <div
-                key={content.id}
-                className={`relative p-4 rounded-md shadow-md cursor-pointer transition-colors duration-300 ${
-                  selectedCardId === content.id
-                    ? "bg-orange-100"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-                onClick={() => handleCardClick(content)}
-                style={{ maxWidth: "90%" }}
-              >
-                <div className="absolute top-2 right-2">
-                  <button
-                    className="p-2 rounded-full bg-orange-100 hover:bg-orange-200"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openNewContentModal();
-                    }}
-                  >
-                    <FaPlus />
-                  </button>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                    {content.hook}
-                  </h3>
-                  <p className="text-sm text-gray-500 mb-2">{content.script}</p>
-
-                  <div className="flex items-center text-gray-500 text-sm">
-                    {platformIcons[content.platform]}
-                    <span>
-                      {content.platform.charAt(0).toUpperCase() +
-                        content.platform.slice(1)}
-                    </span>
-                  </div>
-                </div>
-              </div>
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold">Chat History</h2>
+        <ul className="mt-4 space-y-4">
+          {chatHistory.length > 0 ? (
+            chatHistory.map((chat) => (
+              <li key={chat.chatId} className="p-4 border rounded bg-gray-50">
+                <p>
+                  <strong>Prompt:</strong> {chat.prompt}
+                </p>
+                <p>
+                  <strong>Response:</strong> {chat.response}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  <strong>Date:</strong>{" "}
+                  {chat.date
+                    ? new Date(chat.date).toLocaleString() // Properly format the date
+                    : "N/A"}
+                </p>
+              </li>
             ))
+          ) : (
+            <p className="text-gray-500">No chat history available.</p>
           )}
-        </div>
-      )}
-
-      {isNewContentModalOpen && (
-        <NewContentModal
-          isOpen={isNewContentModalOpen}
-          onClose={closeNewContentModal}
-          onSubmit={handleNewContent}
-        />
-      )}
-      {isShowContentModalOpen && (
-        <ShowContentModal
-          content={selectedContent}
-          closeModal={closeShowContentModal}
-        />
-      )}
+        </ul>
+      </div>
     </div>
   );
-}
+};
 
-export default ContentPage;
+export default AiPage;
