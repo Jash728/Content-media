@@ -4,9 +4,9 @@ const AiPage = () => {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [chatHistory, setChatHistory] = useState([]); // Store fetched chat history
+  const [chatHistory, setChatHistory] = useState([]); 
 
-  // Fetch chat history from the backend
+  
   const fetchChatHistory = async () => {
     try {
       const res = await fetch(
@@ -20,7 +20,7 @@ const AiPage = () => {
   };
 
   useEffect(() => {
-    fetchChatHistory(); // Fetch chat history on component mount
+    fetchChatHistory(); 
   }, []);
 
   const generateText = async () => {
@@ -35,8 +35,7 @@ const AiPage = () => {
     try {
        
         
-      const apiUrl = `${process.env.REACT_APP_API_URL}/api/generate`; // Use the deployed URL
-
+      const apiUrl = `${process.env.REACT_APP_API_URL}/api/generate`;
       const aiResponse = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -74,7 +73,7 @@ const AiPage = () => {
         }
       }
 
-      // Save prompt and response to the backend
+     
       await fetch("https://content-media-backend.onrender.com/api/chats", {
         method: "POST",
         headers: {
@@ -86,7 +85,7 @@ const AiPage = () => {
         }),
       });
 
-      fetchChatHistory(); // Refresh chat history
+      fetchChatHistory(); 
     } catch (error) {
       console.error("Error:", error);
       alert("An error occurred.");
@@ -141,7 +140,7 @@ const AiPage = () => {
                 <p className="text-gray-500 text-sm">
                   <strong>Date:</strong>{" "}
                   {chat.date
-                    ? new Date(chat.date).toLocaleString() // Properly format the date
+                    ? new Date(chat.date).toLocaleString() 
                     : "N/A"}
                 </p>
               </li>
