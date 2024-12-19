@@ -9,7 +9,7 @@ const AiPage = () => {
   // Fetch chat history from the server
   const fetchChatHistory = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/chats");
+      const res = await fetch("https://content-media-backend.onrender.com/api/chats");
       if (!res.ok) throw new Error("Failed to fetch chat history.");
       const data = await res.json();
       setChatHistory(data);
@@ -45,7 +45,7 @@ const AiPage = () => {
     setIsLoading(true);
   
     try {
-      const aiResponse = await fetch("http://localhost:5000/api/proxy/generate", {
+      const aiResponse = await fetch("https://content-media-backend.onrender.com/api/proxy/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ const AiPage = () => {
         return;
       }
   
-      const saveResponse = await fetch("http://localhost:5000/api/chats", {
+      const saveResponse = await fetch("https://content-media-backend.onrender.com/api/chats", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
